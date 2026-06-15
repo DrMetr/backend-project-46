@@ -1,5 +1,5 @@
 
-.PHONY: install gendiff
+.PHONY: install gendiff test
 
 install:
 	npm ci
@@ -12,3 +12,6 @@ make lint:
 
 gendiff:
 	node bin/gendiffComand.js
+
+test:
+	npx jest __tests__/index.test.js
