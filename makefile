@@ -14,4 +14,4 @@ gendiff:
 	node bin/gendiffComand.js
 
 test:
-	npx jest __tests__/index.test.js
+	npm test

@@ -1,71 +1,63 @@
-/*
-const genDiff = (arg1, arg2) => {
-  let diff = [];
-  let arr1 = Object.entries(arg1),
-    arr2 = Object.entries(arg2);
+import _ from "lodash";
+import chooseFormatFunction from "./formatters/index.js";
 
-  arr1.forEach(([key, value]) => {
-    if (arg2[key] && arg2[key] === value) {
-      diff.push([" ", `${key}: ${value}`]);
-    } else if (arg2[key] && arg2[key] !== value) {
-      diff.push(["-", `${key}: ${value}`]);
-      diff.push(["+", `${key}: ${arg2[key]}`]);
-    } else {
-      diff.push(["-", `${key}: ${value}`]);
-    }
-  });
+const genDiff = (arg1, arg2, style = "stylish", format = "basic") => {
+  const diffs = getDifferences(arg1, arg2);
+  const formatter = chooseFormatFunction(format);
 
-  arr2.forEach(([key, value]) => {
-    if (!arg1[key]) {
-      diff.push(["+", `${key}: ${value}`]);
-    }
-  });
-
-  return `{\n${diff
-    .sort((a, b) => (a[1] > b[1] ? 1 : -1))
-    .map((i) => "  " + i.join(" "))
-    .join("\n")}\n}`;
-};
-*/
-
-const genDiff = (arg1, arg2) => {
-  let diff = [];
-  let arr1 = Object.entries(arg1),
-    arr2 = Object.entries(arg2);
-  arr1.forEach(([key, value]) => {
-    if (arg2[key] && arg2[key] === value) {
-      diff.push({ operation: "unchanged", key: key, value: value });
-    } else if (arg2[key] && arg2[key] !== value) {
-      diff.push({
-        operation: "changed",
-        key: key,
-        value: arg1[key],
-        newValue: arg2[key],
-      });
-    } else {
-      diff.push({ operation: "deleted", key: key, value: arg1[key] });
-    }
-  });
-
-  arr2.forEach(([key, value]) => {
-    if (!arg1[key]) {
-      diff.push({ operation: "added", key: key, value: value });
-    }
-  });
-  return formatDiff(diff);
+  if (format === "plain") {
+    return formatter(diffs);
+  } else {
+    return formatter(diffs, style);
+  }
 };
 
-const formatDiff = (diff) => {
-  let arr = diff
-    .sort((a, b) => (a.key > b.key ? 1 : -1))
-    .map(({ operation, key, value, newValue }) => {
-      if (operation === "changed")
-        return `  - ${key}: ${value}\n  + ${key}: ${newValue}`;
-      if (operation === "unchanged") return `    ${key}: ${value}`;
-      if (operation === "deleted") return `  - ${key}: ${value}`;
-      if (operation === "added") return `  + ${key}: ${value}`;
-    });
-  return `{\n${arr.join("\n")}\n}`;
+const getDifferences = (obj1, obj2, indent = 1) => {
+  const [data1, data2] = [Object.keys(obj1), Object.keys(obj2)];
+  let all = _.sortBy(_.union(data1, data2));
+  return all.map((key) => {
+    const [val1, val2, has1, has2] = [
+      obj1[key],
+      obj2[key],
+      _.has(obj1, key),
+      _.has(obj2, key),
+    ];
+
+    if (!has1)
+      return {
+        key,
+        value: val2,
+        operation: "added",
+        indent,
+      };
+    if (!has2)
+      return {
+        key,
+        value: val1,
+        operation: "deleted",
+        indent,
+      };
+    if (
+      _.isPlainObject(val1) &&
+      _.isPlainObject(val2) &&
+      val1 !== null &&
+      val2 !== null
+    )
+      return {
+        key,
+        operation: "nested",
+        children: getDifferences(val1, val2),
+        indent: indent + 1,
+      };
+    if (val1 === val2) return { key, value: val2, operation: "unchanged" };
+    return {
+      key,
+      value: val1,
+      operation: "changed",
+      newValue: val2,
+      indent,
+    };
+  });
 };
 
-module.exports = genDiff;
+export default genDiff;

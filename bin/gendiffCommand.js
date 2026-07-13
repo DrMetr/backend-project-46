@@ -1,13 +1,14 @@
 #!/usr/bin/env node
-// CommonJS (.cjs)
 
-const genDiff = require("../src/gendiff.js");
-const { Command } = require("commander");
+import genDiff from "../src/gendiff.js";
+import { Command } from "commander";
+import { readFileSync } from "node:fs";
+import { cwd } from "node:process";
+import path from "node:path";
+import { fileURLToPath } from "url";
+import yaml from "js-yaml";
+
 const program = new Command();
-const { readFileSync } = require("node:fs");
-const { cwd } = require("node:process");
-const path = require("node:path");
-
 program
   .name("gendiff")
   .version("1.0.0")
@@ -24,16 +25,46 @@ program
   )
   .argument("[filepath1]", "first filepath")
   .argument("[filepath2]", "second filepath")
+  .argument("[style]", "style of the result")
+  .option("-f, --format <type>", "output format plain by default")
   .option("-h, --help", "show help")
-  .action((filepath1, filepath2) => {
+  .action((filepath1, filepath2, style) => {
     const opts = program.opts();
     if (opts.help) console.log(program.description());
     if (opts.version) console.log(program.version);
 
-    const makeJSON = (x) =>
-      JSON.parse(readFileSync(path.resolve(`${cwd()}`, x), "utf-8"));
-    let [f1, f2] = [makeJSON(filepath1), makeJSON(filepath2)];
-    console.log(genDiff(f1, f2));
+    if (filepath1 && filepath2) {
+      const makeObject = (filepath) => {
+        try {
+          const readFile = readFileSync(
+            path.resolve(`${cwd()}`, filepath),
+            "utf-8",
+          );
+          if (/\.json$/.test(filepath)) {
+            return JSON.parse(readFile);
+          }
+          if (/\.ya?ml/.test(filepath)) {
+            return yaml.load(readFile);
+          }
+          return new Error("No such file");
+        } catch (error) {
+          console.log(error);
+          return null;
+        }
+      };
+
+      const __filename = fileURLToPath(import.meta.url);
+      const __dirname = path.dirname(__filename);
+      const getFixturePath = (name) =>
+        path.join(__dirname, "..", "__fixtures__", name);
+
+      const files = [filepath1, filepath2];
+      let [f1, f2] = files
+        .map((file) => getFixturePath(file))
+        .map((file) => makeObject(file));
+
+      if (f1 && f2) console.log(genDiff(f1, f2, style, opts.format));
+    }
   });
 
 program.parse();
