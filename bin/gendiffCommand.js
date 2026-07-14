@@ -56,7 +56,7 @@ program
       const __filename = fileURLToPath(import.meta.url);
       const __dirname = path.dirname(__filename);
       const getFixturePath = (name) =>
-        path.join(__dirname, "..", "__fixtures__", name);
+        path.resolve(__dirname, "..", "__fixtures__", name);
 
       const files = [filepath1, filepath2];
       let [f1, f2] = files

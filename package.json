@@ -20,7 +20,7 @@
     "test:coverage": "jest --coverage"
   },
   "bin": {
-    "genDiff": "bin/gendiffCommand.js"
+    "gendiff": "bin/gendiffCommand.js"
   },
   "dependencies": {
     "commander": "^15.0.0",
