@@ -1,2 +1,4 @@
 /node_modules/
 /coverage/
+/__fixtures__/test1.json
+/__fixtures__/test2.json

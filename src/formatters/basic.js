@@ -1,30 +1,27 @@
 import _ from "lodash";
 
-const formatDifferencesBasic = (diffs, style) => {
-  let indentStyle;
-  switch (style) {
-    case "stylish":
-      indentStyle = "..";
-      break;
-    case "spaces":
-      indentStyle = "  ";
-      break;
-    default:
-      throw new Error("No such style");
-  }
-
+const formatDifferencesBasic = (diffs, style, indent = 1) => {
+  let indentStyle = "..";
+  if (style === "spaces") indentStyle = "  ";
   let arr = diffs
     .sort((a, b) => (a.key > b.key ? 1 : -1))
-    .map(({ operation, key, value, newValue, children, indent }) => {
-      indent = indent || 1;
-      if (_.isPlainObject(value)) {
-        value = formatNestedValue(value, indent + 1, indentStyle);
-      }
+    .map(({ operation, key, value, newValue, children }) => {
+      const checkValues = (val) => {
+        if (_.isPlainObject(val) && operation !== "nested") {
+          const nestedChildren = Object.keys(val).map((k) => ({
+            key: k,
+            value: val[k],
+            operation: "unchanged",
+          }));
 
-      if (_.isPlainObject(newValue)) {
-        value = formatNestedValue(newValue, indent + 1, indentStyle);
-      }
-      let sign;
+          return formatDifferencesBasic(nestedChildren, style, indent + 1);
+        }
+        return val;
+      };
+
+      [value, newValue] = [value, newValue].map((item) => checkValues(item));
+
+      let sign = "  ";
       switch (operation) {
         case "added":
           sign = "+ ";
@@ -33,23 +30,18 @@ const formatDifferencesBasic = (diffs, style) => {
           sign = "- ";
           break;
         case "nested":
-          return `  ${key}: ${formatDifferencesBasic(children, style)}`;
+          return `${indentStyle.repeat(indent)}${key}: ${formatDifferencesBasic(
+            children,
+            style,
+            indent + 1,
+          )}`;
         case "changed":
-          return `- ${key}: ${value}\n${indentStyle.repeat(indent)}+ ${key}: ${newValue}`;
-        default:
-          sign = "  ";
+          return `${indentStyle.repeat(indent)}- ${key}: ${value}\n${indentStyle.repeat(indent)}+ ${key}: ${newValue}`;
       }
 
-      return `${sign}${key}: ${value}`;
+      return `${indentStyle.repeat(indent)}${sign}${key}: ${value}`;
     });
-  return `{\n${indentStyle}${arr.join(`\n${indentStyle}`)}\n}`;
-};
-
-const formatNestedValue = (obj, indent, indentStyle, resultStr = "") => {
-  let [[key, value]] = Object.entries(obj);
-  if (!_.isPlainObject(value))
-    return `{\n${indentStyle.repeat(indent + 1)}${key}: ${value}\n${indentStyle.repeat(indent)}}`;
-  return formatNestedValue(value, indent + 1, indentStyle, resultStr);
+  return `{\n${arr.join(`\n`)}\n${indentStyle.repeat(indent - 1)}}`;
 };
 
 export default formatDifferencesBasic;

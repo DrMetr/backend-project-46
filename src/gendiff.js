@@ -12,7 +12,7 @@ const genDiff = (arg1, arg2, style = "stylish", format = "basic") => {
   }
 };
 
-const getDifferences = (obj1, obj2, indent = 1) => {
+const getDifferences = (obj1, obj2) => {
   const [data1, data2] = [Object.keys(obj1), Object.keys(obj2)];
   let all = _.sortBy(_.union(data1, data2));
   return all.map((key) => {
@@ -28,14 +28,12 @@ const getDifferences = (obj1, obj2, indent = 1) => {
         key,
         value: val2,
         operation: "added",
-        indent,
       };
     if (!has2)
       return {
         key,
         value: val1,
         operation: "deleted",
-        indent,
       };
     if (
       _.isPlainObject(val1) &&
@@ -47,7 +45,6 @@ const getDifferences = (obj1, obj2, indent = 1) => {
         key,
         operation: "nested",
         children: getDifferences(val1, val2),
-        indent: indent + 1,
       };
     if (val1 === val2) return { key, value: val2, operation: "unchanged" };
     return {
@@ -55,7 +52,6 @@ const getDifferences = (obj1, obj2, indent = 1) => {
       value: val1,
       operation: "changed",
       newValue: val2,
-      indent,
     };
   });
 };
