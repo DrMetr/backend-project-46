@@ -44,7 +44,7 @@ const formatDifferencesBasic = (diffs, indent = 1) => {
 
       return `${countSpaces(indent)}${sign}${key}: ${value}`;
     });
-  return `{\n${arr.join(`\n`)}\n${indent === 1 ? "" : countSpaces(indent - 1)}}`;
+  return `{\n${arr.join(`\n`)}\n${indent === 1 ? "" : countSpaces(indent - 0.5)}}`;
 };
 
 export default formatDifferencesBasic;
