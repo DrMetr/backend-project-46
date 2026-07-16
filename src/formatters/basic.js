@@ -41,7 +41,7 @@ const formatDifferencesBasic = (diffs, style, indent = 2) => {
 
       return `${indentStyle.repeat(indent)}${sign}${key}: ${value}`;
     });
-  return `{\n${arr.join(`\n`)}\n${indentStyle.repeat(indent - 1)}}`;
+  return `{\n${arr.join(`\n`)}\n${indentStyle.repeat(indent)}}`;
 };
 
 export default formatDifferencesBasic;
