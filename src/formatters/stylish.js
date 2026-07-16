@@ -1,8 +1,12 @@
 import _ from "lodash";
 
-const formatDifferencesBasic = (diffs, style, indent = 2) => {
-  let indentStyle = "..";
-  if (style === "spaces") indentStyle = "  ";
+const formatDifferencesBasic = (diffs, indent = 1) => {
+  const countSpaces = (indent) => {
+    let count = indent * 4 - 2;
+    if (count < 1) return "";
+    return " ".repeat(count);
+  };
+
   let arr = diffs
     .sort((a, b) => (a.key > b.key ? 1 : -1))
     .map(({ operation, key, value, newValue, children }) => {
@@ -14,7 +18,7 @@ const formatDifferencesBasic = (diffs, style, indent = 2) => {
             operation: "unchanged",
           }));
 
-          return formatDifferencesBasic(nestedChildren, style, indent + 1);
+          return formatDifferencesBasic(nestedChildren, indent + 1);
         }
         return val;
       };
@@ -30,18 +34,17 @@ const formatDifferencesBasic = (diffs, style, indent = 2) => {
           sign = "- ";
           break;
         case "nested":
-          return `${indentStyle.repeat(indent)}${key}: ${formatDifferencesBasic(
+          return `${countSpaces(indent)}${key}: ${formatDifferencesBasic(
             children,
-            style,
-            indent + 1,
+            indent + 2,
           )}`;
         case "changed":
-          return `${indentStyle.repeat(indent)}- ${key}: ${value}\n${indentStyle.repeat(indent)}+ ${key}: ${newValue}`;
+          return `${countSpaces(indent)}- ${key}: ${value}\n${countSpaces(indent)}+ ${key}: ${newValue}`;
       }
 
-      return `${indentStyle.repeat(indent)}${sign}${key}: ${value}`;
+      return `${countSpaces(indent)}${sign}${key}: ${value}`;
     });
-  return `{\n${arr.join(`\n`)}\n${indentStyle.repeat(indent - 1)}}`;
+  return `{\n${arr.join(`\n`)}\n${indent === 1 ? "" : countSpaces(indent)}}`;
 };
 
 export default formatDifferencesBasic;

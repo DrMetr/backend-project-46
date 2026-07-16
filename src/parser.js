@@ -17,7 +17,7 @@ const parse = (filepath) => {
       if (/\.ya?ml/.test(filepath)) {
         return yaml.load(readFile);
       }
-      return new Error("No such file");
+      return new Error("No such file or extension");
     } catch (error) {
       console.log(error);
       return null;

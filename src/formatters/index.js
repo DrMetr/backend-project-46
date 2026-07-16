@@ -1,10 +1,10 @@
-import formatDifferencesBasic from "./basic.js";
+import formatDifferencesStylish from "./stylish.js";
 import formatDifferencesPlain from "./plain.js";
 import formatDifferencesJSON from "./json.js";
 
 const chooseFormatFunction = (format) => {
   const functions = {
-    basic: formatDifferencesBasic,
+    stylish: formatDifferencesStylish,
     plain: formatDifferencesPlain,
     json: formatDifferencesJSON,
   };
