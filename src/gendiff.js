@@ -1,7 +1,9 @@
 import _ from "lodash";
 import chooseFormatFunction from "./formatters/index.js";
+import parse from "./parser.js";
 
 const genDiff = (arg1, arg2, style = "spaces", format = "basic") => {
+  [arg1, arg2] = [arg1, arg2].map((arg) => parse(arg));
   const diffs = getDifferences(arg1, arg2);
   const formatter = chooseFormatFunction(format);
 

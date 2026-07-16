@@ -33,7 +33,7 @@ const formatDifferencesBasic = (diffs, style, indent = 2) => {
           return `${indentStyle.repeat(indent)}${key}: ${formatDifferencesBasic(
             children,
             style,
-            indent + 2,
+            indent + 1,
           )}`;
         case "changed":
           return `${indentStyle.repeat(indent)}- ${key}: ${value}\n${indentStyle.repeat(indent)}+ ${key}: ${newValue}`;
@@ -41,7 +41,7 @@ const formatDifferencesBasic = (diffs, style, indent = 2) => {
 
       return `${indentStyle.repeat(indent)}${sign}${key}: ${value}`;
     });
-  return `{\n${arr.join(`\n`)}\n${indentStyle.repeat(indent)}}`;
+  return `{\n${arr.join(`\n`)}\n${indentStyle.repeat(indent - 1)}}`;
 };
 
 export default formatDifferencesBasic;
