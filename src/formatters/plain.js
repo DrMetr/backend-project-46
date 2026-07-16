@@ -9,6 +9,8 @@ const formatDifferencesPlain = (diffs, parent = "") => {
       const formatValue = (val) => {
         if (_.isPlainObject(val) && operation !== "nested")
           return "[complex value]";
+        if (typeof val === "string") return `'${val}'`;
+        if (val === "") return "";
         return val;
       };
 
