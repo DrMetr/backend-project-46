@@ -1,6 +1,6 @@
 import _ from "lodash";
 
-const formatDifferencesBasic = (diffs, style, indent = 1) => {
+const formatDifferencesBasic = (diffs, style, indent = 2) => {
   let indentStyle = "..";
   if (style === "spaces") indentStyle = "  ";
   let arr = diffs
