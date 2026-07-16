@@ -58,15 +58,13 @@ program
       const getFixturePath = (name) =>
         path.resolve(__dirname, "..", "__fixtures__", name);
 
-      const files = [filepath1, filepath2];
-      let [f1, f2] = files
+      let [f1, f2] = [filepath1, filepath2]
         .map((file) =>
           file.includes("__fixtures__")
             ? path.resolve(__dirname, "..", file)
             : getFixturePath(file),
         )
         .map((file) => makeObject(file));
-      console.log(filepath1, filepath2);
       if (f1 && f2) console.log(genDiff(f1, f2, style, opts.format));
     }
   });

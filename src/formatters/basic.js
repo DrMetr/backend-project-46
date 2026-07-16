@@ -33,7 +33,7 @@ const formatDifferencesBasic = (diffs, style, indent = 2) => {
           return `${indentStyle.repeat(indent)}${key}: ${formatDifferencesBasic(
             children,
             style,
-            indent + 1,
+            indent + 2,
           )}`;
         case "changed":
           return `${indentStyle.repeat(indent)}- ${key}: ${value}\n${indentStyle.repeat(indent)}+ ${key}: ${newValue}`;
