@@ -20,16 +20,15 @@ program
   )
   .argument("[filepath1]", "first filepath")
   .argument("[filepath2]", "second filepath")
-  .argument("[style]", "style of the result")
   .option("-f, --format <type>", "output format plain by default")
   .option("-h, --help", "show help")
-  .action((filepath1, filepath2, style) => {
+  .action((filepath1, filepath2) => {
     const opts = program.opts();
     if (opts.help) console.log(program.description());
     if (opts.version) console.log(program.version);
 
     if (filepath1 && filepath2) {
-      console.log(genDiff(filepath1, filepath2, style, opts.format));
+      console.log(genDiff(filepath1, filepath2, opts.format));
     }
   });
 

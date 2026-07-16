@@ -6,10 +6,13 @@ const formatDifferencesPlain = (diffs, parent = "") => {
   return diffs
     .sort((a, b) => (a.key > b.key ? 1 : -1))
     .map(({ operation, key, value, newValue, children }) => {
-      if (typeof value === "string") value = `'${value}'`;
-      if (typeof newValue === "string") newValue = `'${newValue}'`;
-      if (_.isPlainObject(value) && operation !== "nested")
-        value = "[complex value]";
+      const formatValue = (val) => {
+        if (_.isPlainObject(val) && operation !== "nested")
+          return "[complex value]";
+        return `${val}`;
+      };
+
+      [value, newValue] = [value, newValue].map((item) => formatValue(item));
       switch (operation) {
         case "added":
           return `Property '${parent}${key}' was added with value: ${value}`;
