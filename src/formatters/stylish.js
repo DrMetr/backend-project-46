@@ -34,9 +34,9 @@ const formatDifferencesBasic = (diffs, indent = 1) => {
           sign = "- ";
           break;
         case "nested":
-          return `${countSpaces(indent)}${key}: ${formatDifferencesBasic(
+          return `${countSpaces(indent)}  ${key}: ${formatDifferencesBasic(
             children,
-            indent + 2,
+            indent + 1,
           )}`;
         case "changed":
           return `${countSpaces(indent)}- ${key}: ${value}\n${countSpaces(indent)}+ ${key}: ${newValue}`;
@@ -44,7 +44,7 @@ const formatDifferencesBasic = (diffs, indent = 1) => {
 
       return `${countSpaces(indent)}${sign}${key}: ${value}`;
     });
-  return `{\n${arr.join(`\n`)}\n${indent === 1 ? "" : countSpaces(indent)}}`;
+  return `{\n${arr.join(`\n`)}\n${indent === 1 ? "" : countSpaces(indent - 1)}}`;
 };
 
 export default formatDifferencesBasic;
