@@ -14,6 +14,6 @@ test("genDiff from hexlet ymls", () => {
   expect(genDiff(...filenames2)).toBe(expected);
 });
 
-test("genDiff from hexlet jsons with nested values", () => {
+test("genDiff from hexlet jsons with nested values plain format", () => {
   expect(genDiff(...filenames3, "plain")).toBe(expected2);
 });
