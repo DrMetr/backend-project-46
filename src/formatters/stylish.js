@@ -3,11 +3,10 @@ import _ from "lodash";
 const formatDifferencesBasic = (diffs, indent = 1) => {
   const countSpaces = (indent) => {
     let count = indent * 4 - 2;
-    //if (count < 1) return "";
     return " ".repeat(count);
   };
   const countSpacesForClosingBraces = (indent) => {
-    let count = indent * 4;
+    let count = (indent - 1) * 4;
     if (count < 1) return "";
     return " ".repeat(count);
   };
